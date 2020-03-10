@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import App from './App.vue';
-import router from './route';
+// 하위 index.js를 가져 온다
+import router from './router';
 
 Vue.config.productionTip = false;
 

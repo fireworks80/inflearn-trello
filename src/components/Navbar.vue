@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <ul>
       <li>
         <router-link to="/">Home</router-link>
@@ -8,6 +9,7 @@
         <router-link to="/login">login</router-link>
       </li>
     </ul>
+
   </div>
 </template>
 
@@ -18,8 +20,10 @@
 </script>
 
 <style lang="scss" scoped>
+
   ul {
     display: inline-flex;
     list-style: none;
   }
+
 </style>
