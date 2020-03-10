@@ -1,6 +1,6 @@
 <template>
   <div>
-    Page Not Found
+    page Not Found
   </div>
 </template>
 
