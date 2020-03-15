@@ -16,12 +16,15 @@
 </template>
 
 <script>
+import axios from 'axios';
+
   export default {
     name: 'Home',
     data() {
       return {
         loading: false,
-        apiRes: ''
+        apiRes: '',
+        error: ''
       }
     },
     created() {
@@ -31,18 +34,16 @@
       fetchData() {
         this.loading = true;
 
-        const req = new XMLHttpRequest();
-
-        req.open('GET', 'http://localhost:3000/health');
-        req.send();
-        req.addEventListener('load', () => {
-          this.loading = false;
-          this.apiRes = {
-            status: req.status,
-            statusText: req.statusText,
-            response: JSON.parse(req.response)
-          }
-        });
+        axios.get('http://localhost:3000/health')
+          .then(response => {
+            this.apiRes = response.data;
+          })
+          .catch(res => {
+            this.error = res.response.data
+          })
+          .finally(() => {
+            this.loading = false;
+          });
       }
     }
   }
