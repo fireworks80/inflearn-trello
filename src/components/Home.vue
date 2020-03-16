@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { board } from '../api';
 
   export default {
     name: 'Home',
@@ -37,17 +37,11 @@ import axios from 'axios';
     methods: {
       fetchData() {
         this.loading = true;
-
-        axios.get('http://localhost:3000/boards')
-          .then(response => {
-            this.boards = response.data;
-          })
-          .catch(() => {
-            this.$router.replace('/login');
-          })
-          .finally(() => {
-            this.loading = false;
-          });
+        board.fetch()
+              .then( data => { this.boards = data; })
+              .finally(() => {
+                this.loading = false;
+              });
       }
     }
   }
