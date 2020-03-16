@@ -37,7 +37,7 @@ import axios from 'axios';
     methods: {
       fetchData() {
         this.loading = true;
-
+        // 서드파티 라이브러리는 한번 래핑해서 사용하는 것이 좋다.
         axios.get('http://localhost:3000/boards')
           .then(response => {
             this.boards = response.data;
