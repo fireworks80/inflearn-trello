@@ -1,22 +1,23 @@
 <template>
   <div id="app">
     <Navbar />
-    <h1>Welcome</h1>
-    
+
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Navbar from './components/Navbar'
+import Navbar from "./components/Navbar";
 export default {
-  name: 'App',
-  components: {Navbar}
-}
+  name: "App",
+  components: { Navbar }
+};
 </script>
 
 <style>
-html, body, #app {
+html,
+body,
+#app {
   height: 100%;
   margin: 0px;
 }
@@ -36,7 +37,7 @@ html, body, #app {
   display: inline-block;
   color: #fff;
   font-size: 14px;
-  line-height: 20px;  
+  line-height: 20px;
   font-weight: 700;
   cursor: pointer;
 }
@@ -53,10 +54,10 @@ html, body, #app {
   display: block;
   margin-bottom: 12px;
   padding: 6px 8px;
-  transition: background-color .3s;
+  transition: background-color 0.3s;
 }
-input[type=text].form-control,
-input[type=password].form-control,
+input[type="text"].form-control,
+input[type="password"].form-control,
 textarea.form-control {
   font-size: 14px;
 }
