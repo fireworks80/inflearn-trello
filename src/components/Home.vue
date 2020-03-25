@@ -1,41 +1,40 @@
 <template>
   <div>
-    <dl>
-      <dt>Board List:</dt>
-      <dd>
-        <p v-if="loading">loading.....</p>
-        <div v-else>
-          <p>API result:</p>
-          <div v-for="b in boards" :key="b.id">{{b}}</div>
-        </div>
-
-        <ul>
-          <li>
-            <router-link to="/b/1">Board 1</router-link>
-          </li>
-          <li>
-            <router-link to="/b/2">Board 2</router-link>
-          </li>
-        </ul>
-      </dd>
-    </dl>
+    <h1>Persnal Boards</h1>
+    <div>
+      <ul class="board-list">
+        <li class="board-item" v-for="board in boards" :key="board.id" ref="boardItem"  :data-bgColor="board.bgColor">
+          <router-link :to="`/b/${board.id}`"><em>{{board.title}}</em></router-link>
+        </li>
+      </ul>
+      <button type="button" @click="addBoard">Create Board</button>
+    </div>
+    <AddBoard v-if="isShow" @close="isShow=false" @submit="onSubmit" />
   </div>
 </template>
 
 <script>
 import { board } from "../api";
-
+import AddBoard from './AddBoard';
 export default {
   name: "Home",
+  components: {
+    AddBoard
+  },
   data() {
     return {
       loading: false,
       boards: [],
-      error: ""
+      isShow: false
     };
   },
   created() {
     this.fetchData();
+  },
+  updated() {
+    this.$refs.boardItem.forEach((el) => {
+      el.style.backgroundColor = el.dataset.bgcolor;
+    });
   },
   methods: {
     fetchData() {
@@ -43,15 +42,41 @@ export default {
       board
         .fetch()
         .then(data => {
-          this.boards = data;
+          this.boards = data.list;
         })
         .finally(() => {
           this.loading = false;
         });
+    },
+    addBoard() {
+      this.isShow = true;
+    },
+    onSubmit(boardName) {
+      board.addBoard(boardName)
+            .then(() => {
+              this.fetchData();
+            })
+            .catch(err => (console.log(err)));
     }
   }
 };
 </script>
 
 <style>
+.board-list {
+  display: flex;
+  flex-flow: wrap;
+  padding-left: 0;
+  list-style: none;
+}
+
+.board-item:nth-child(n + 2) {
+  margin-left: 10px;
+}
+
+.board-item a {
+  display: block;
+  padding: 10px 30px;
+  text-decoration: none;
+}
 </style>

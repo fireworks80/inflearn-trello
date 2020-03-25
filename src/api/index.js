@@ -36,6 +36,9 @@ if (token) setAuthInHeader(token);
 export const board = {
   fetch() {
     return request('GET', '/boards');
+  },
+  addBoard(title) {
+    return request('post', '/boards', {title});
   }
 };
 
