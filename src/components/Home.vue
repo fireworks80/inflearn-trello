@@ -1,82 +1,134 @@
 <template>
   <div>
-    <h1>Persnal Boards</h1>
-    <div>
-      <ul class="board-list">
-        <li class="board-item" v-for="board in boards" :key="board.id" ref="boardItem"  :data-bgColor="board.bgColor">
-          <router-link :to="`/b/${board.id}`"><em>{{board.title}}</em></router-link>
-        </li>
-      </ul>
-      <button type="button" @click="addBoard">Create Board</button>
+    <div class="home-title">Personal Boards</div>
+    <div class="board-list" ref="boardList">
+      <div class="board-item" v-for="b in boards" :key="b.id" 
+        :data-bgcolor="b.bgColor" ref="boardItem">
+        <router-link :to="`/b/${b.id}`">
+          <div class="board-item-title">{{b.title}}</div>
+        </router-link>
+      </div>
+      <div class="board-item board-item-new">
+        <a class="new-board-btn" href="" @click.prevent="addBoard">
+          Create new board...
+        </a>
+      </div>
     </div>
-    <AddBoard v-if="isShow" @close="isShow=false" @submit="onSubmit" />
+    <AddBoard v-if="isAddBoard" @close="showModal=false" @submit="onSubmitBoard" />
   </div>
 </template>
 
 <script>
-import { board } from "../api";
-import AddBoard from './AddBoard';
+import {board} from '../api'
+import AddBoard from './AddBoard'
+import { mapState } from 'vuex'
 export default {
-  name: "Home",
-  components: {
-    AddBoard
-  },
+  components: { AddBoard },
   data() {
     return {
       loading: false,
       boards: [],
-      isShow: false
-    };
+      error: '',
+    }
   },
   created() {
-    this.fetchData();
+    this.fetchData()
+  },
+  // 여러 저장소 속성이나 getter를 사용하면 반복적이고 장황해지므로
+  // getter함수를 생성하는 mapState속성을 사용한다.
+  // computed: {
+  //   isAddBoard() {
+  //     return this.$store.state.isAddBoard;
+  //   }
+  // },
+  // ===========================
+  // 이 상태는 다른 컴퓨티드 속성을 추가 할 수 없다.
+  // mapState는 객체를 반환한다.
+  // computed에 여려 계산된 속성을 사용하기 위해
+  // 객체 전개 연산자를 이용하여 작성한다.
+  // computed: mapState([
+  //   'isAddBoard'
+  // ]),
+  computed: {
+    ...mapState([
+      'isAddBoard'
+    ])
   },
   updated() {
-    this.$refs.boardItem.forEach((el) => {
-      el.style.backgroundColor = el.dataset.bgcolor;
-    });
+    this.$refs.boardItem.forEach(el => {
+      el.style.backgroundColor = el.dataset.bgcolor
+    })
   },
   methods: {
     fetchData() {
-      this.loading = true;
-      board
-        .fetch()
+      this.loading = true
+      board.fetch()
         .then(data => {
-          this.boards = data.list;
+          this.boards = data.list
         })
-        .finally(() => {
-          this.loading = false;
-        });
+        .finally(_=> {
+          this.loading = false
+        })
     },
     addBoard() {
-      this.isShow = true;
+      // isAddBoard를 store -> state로 옮겼기때문에
+      // mutation을 이용해서 상태 변이를 시켜야 한다.
+      // this.showModal = true;
     },
-    onSubmit(boardName) {
-      board.addBoard(boardName)
-            .then(() => {
-              this.fetchData();
-            })
+    onSubmitBoard(boardName) {
+      this.showModal = false;
+      board.add(boardName)
+            .then(data => this.fetchData())
             .catch(err => (console.log(err)));
     }
   }
-};
+}
 </script>
 
 <style>
+.home-title {
+  padding: 10px;
+  font-size: 18px;
+  font-weight: bold;
+}
 .board-list {
+  padding: 10px;
   display: flex;
-  flex-flow: wrap;
-  padding-left: 0;
-  list-style: none;
+  flex-wrap: wrap;
 }
-
-.board-item:nth-child(n + 2) {
-  margin-left: 10px;
+.board-item {
+  width: 23%;
+  height: 100px;
+  margin: 0 2% 20px 0;
+  border-radius: 3px;
 }
-
+.board-item-new {
+  background-color: #ddd;
+}
 .board-item a {
-  display: block;
-  padding: 10px 30px;
   text-decoration: none;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.board-item a:hover,
+.board-item a:focus {
+  background-color: rgba(0,0,0, .1);
+  color: #666;
+}
+.board-item-title {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  padding: 10px;
+}
+.board-item a.new-board-btn {
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  height: 100px;
+  width: inherit;
+  color: #888;
+  font-weight: 700;
 }
 </style>
