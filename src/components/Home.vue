@@ -14,20 +14,18 @@
         </a>
       </div>
     </div>
-    <AddBoard v-if="isAddBoard" @close="showModal=false" @submit="onSubmitBoard" />
+    <AddBoard v-if="isAddBoard" />
   </div>
 </template>
 
 <script>
-import {board} from '../api'
 import AddBoard from './AddBoard'
-import { mapState } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 export default {
   components: { AddBoard },
   data() {
     return {
       loading: false,
-      boards: [],
       error: '',
     }
   },
@@ -51,7 +49,8 @@ export default {
   // ]),
   computed: {
     ...mapState([
-      'isAddBoard'
+      'isAddBoard',
+      'boards'
     ])
   },
   updated() {
@@ -60,26 +59,23 @@ export default {
     })
   },
   methods: {
+    ...mapMutations([
+      'SET_IS_ADD_BOARD'
+    ]),
+    ...mapActions([
+      'FETCH_BOARDS'
+    ]),
     fetchData() {
       this.loading = true
-      board.fetch()
-        .then(data => {
-          this.boards = data.list
-        })
-        .finally(_=> {
-          this.loading = false
-        })
+      this.FETCH_BOARDS().finally(() => {
+        this.loading = false
+      });
     },
     addBoard() {
       // isAddBoard를 store -> state로 옮겼기때문에
       // mutation을 이용해서 상태 변이를 시켜야 한다.
       // this.showModal = true;
-    },
-    onSubmitBoard(boardName) {
-      this.showModal = false;
-      board.add(boardName)
-            .then(data => this.fetchData())
-            .catch(err => (console.log(err)));
+      this.SET_IS_ADD_BOARD(true);
     }
   }
 }

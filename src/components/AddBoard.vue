@@ -3,21 +3,22 @@
     <header slot="header">
       <h2>Add Board</h2>
     </header>
-    <form slot="body" @submit.prevent="onSubmit">
+    <form slot="body" @submit.prevent="addBoard">
       <p>
         <label for="board-name">board name</label>
-        <input type="text" v-model="boardName" id="board-name">
+        <input type="text" ref="input" v-model="boardName" id="board-name">
       </p>
     </form>
     <div class="modal-footer" slot="footer">
-      <button @click.prevent="onSubmit">create board</button>
-      <button class="btn-close" @click="onClose">close</button>
+      <button @click.prevent="addBoard">create board</button>
+      <button type="button" class="btn-close" @click="SET_IS_ADD_BOARD(false)">close</button>
     </div>
   </Modal>
 </template>
 
 <script>
   import Modal from './Modal';
+  import { mapMutations, mapActions } from 'vuex';
   export default {
     name: 'AddBoard',
     components: { Modal },
@@ -26,13 +27,23 @@
         boardName: ''
       };
     },
+    mounted() {
+      return this.$refs.input.focus();
+    },
     methods: {
-      onClose() {
-        this.$emit('close');
-      },
-      onSubmit() {
-        this.$emit('submit', this.boardName);
-        this.$emit('close');
+      ...mapMutations([
+        'SET_IS_ADD_BOARD'
+      ]),
+      ...mapActions([
+        'ADD_BOARD',
+        'FETCH_BOARDS'
+      ]),
+      addBoard() {
+        this.ADD_BOARD({title: this.boardName})
+            .then(() => {
+              this.FETCH_BOARDS();
+            });
+        this.SET_IS_ADD_BOARD(false);
       }
     }
   }
